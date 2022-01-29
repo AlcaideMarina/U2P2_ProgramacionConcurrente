@@ -2,47 +2,32 @@ import java.util.Random;
 
 public class Coche extends Thread {
 
-	private enum STATE{WAITING, CROSSING, FINISH}
+	private enum STATE{ESPERANDO, CRUZANDO, TERMINADO}
 	private STATE state;
-	private int direccion; // 0 norte, 1 sur
+	private String direccion;
 	private int id;
 	private static int numCoches;
-	private Monitor monitor;
+	private MonitorPuente monitorPuente;
 	
-	public Coche(int d, Monitor m) {
+	public Coche(String dir, MonitorPuente m) {
 		id = numCoches++;
-		direccion = d;
-		state = STATE.WAITING;
-		monitor = m;
+		state = STATE.ESPERANDO;
+		direccion = dir;
+		monitorPuente = m;
 		start();
 	}
 	
-	private void carIsWaiting() {
+	private void cocheEsperando() {
+		System.out.println("Coche " + id + ": está esperando para cruzar (" + direccion + ").");
 		
-		String strDir;
-		if (direccion == 0) {
-			strDir = "NORTE";
-		} else {
-			strDir = "SUR";
-		}
+		monitorPuente.esperar(id, direccion);
+		state = Coche.STATE.CRUZANDO;
 		
-		System.out.println("Coche " + id + " está esperando (" + strDir + ").");
-		monitor.obtenerDireccion(direccion);
-		
-		state = state.CROSSING;
-		
+		System.out.println("Coche " + id + ": ha empezado a cruzar (" + direccion + ").");
 	}
 	
-	private void carIsCrossing() {
-		
-		String strDir;
-		if (direccion == 0) {
-			strDir = "NORTE";
-		} else {
-			strDir = "SUR";
-		}
-		
-		System.out.println("Coche " + id + " está cruzando (" + strDir + ").");
+	private void cocheCruzando() {
+
 		Random rdm = new Random();
 		int crossingTime = rdm.nextInt(250 - 50 + 1) + 50;
 		
@@ -53,25 +38,24 @@ public class Coche extends Thread {
 			e.printStackTrace();
 		}
 		
-		System.out.println("Coche " + id + " ha terminado de cruzar (" + strDir + ").");
-		
-		monitor.liberarCarril(direccion);
-		state = state.FINISH;
-		
+		monitorPuente.finalizarPuente(id, direccion);
+		state = Coche.STATE.TERMINADO;
+		System.out.println("Coche " + id + ": ha terminado de cruzar (" + direccion + ").");
 	}
 	
 	@Override
 	public void run() {
 		
-		while(true) {
+		while(state != Coche.STATE.TERMINADO) {
 			switch(state) {
 			
-			case WAITING:
-				carIsWaiting();
+			case ESPERANDO:
+				cocheEsperando();
+				break;	
+			case CRUZANDO:
+				cocheCruzando();
 				break;
-				
-			case CROSSING:
-				carIsCrossing();
+			default:
 				break;
 				
 			}

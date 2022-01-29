@@ -1,25 +1,29 @@
 import java.util.Random;
 
 public class Program {
-
+	
 	public static void main(String[] args) {
 		
-		Monitor monitor = new Monitor();
-		int numCoches = 0;
-		int cont = 0;
-
+		MonitorPuente monitorPuente = new MonitorPuente();
+		String dir;
+		
 		while (true) {
+			// Utilizamos un random para decidir la dirección
 			Random rdm1 = new Random();
-			int dir = (int) Math.round(rdm1.nextDouble());
+			if (rdm1.nextDouble() < 0.5) {
+				dir = "N";
+			} else {
+				dir = "S";
+			}
+			// Utilizamos otro random para ver si ese coche cruza o no
 			Random rdm2 = new Random();
-			double rdmGenerar = rdm2.nextDouble();
-			if (rdmGenerar < 0.9) {
-				new Coche(dir, monitor);
-				numCoches++;
+			if (rdm2.nextDouble() < 0.9) {
+				new Coche(dir, monitorPuente);
+			} else {
+				System.out.println("No cruza");
 			}
 		}
-		
 	}
-	
+
 	
 }
