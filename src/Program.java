@@ -6,6 +6,7 @@ public class Program {
 		
 		Monitor monitor = new Monitor();
 		int numCoches = 0;
+		int cont = 0;
 
 		while (true) {
 			Random rdm1 = new Random();
