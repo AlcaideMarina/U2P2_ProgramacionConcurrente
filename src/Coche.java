@@ -2,13 +2,16 @@ import java.util.Random;
 
 public class Coche extends Thread {
 
-	private enum STATE{ESPERANDO, CRUZANDO, TERMINADO}
+	private enum STATE {
+		ESPERANDO, CRUZANDO, TERMINADO
+	}
+
 	private STATE state;
 	private String direccion;
 	private int id;
 	private static int numCoches;
 	private MonitorPuente monitorPuente;
-	
+
 	public Coche(String dir, MonitorPuente m) {
 		id = numCoches++;
 		state = STATE.ESPERANDO;
@@ -16,50 +19,52 @@ public class Coche extends Thread {
 		monitorPuente = m;
 		start();
 	}
-	
+
 	private void cocheEsperando() {
+
 		System.out.println("Coche " + id + ": está esperando para cruzar (" + direccion + ").");
-		
+
 		monitorPuente.esperar(id, direccion);
 		state = Coche.STATE.CRUZANDO;
-		
+
 		System.out.println("Coche " + id + ": ha empezado a cruzar (" + direccion + ").");
 	}
-	
+
 	private void cocheCruzando() {
 
 		Random rdm = new Random();
 		int crossingTime = rdm.nextInt(250 - 50 + 1) + 50;
-		
+
 		try {
 			sleep(crossingTime);
 		} catch (InterruptedException e) {
-			// TODO Auto-generated catch block
+			System.out.println("Error en cocheCruzando():" + e.toString());
 			e.printStackTrace();
 		}
-		
+
 		monitorPuente.finalizarPuente(id, direccion);
 		state = Coche.STATE.TERMINADO;
 		System.out.println("Coche " + id + ": ha terminado de cruzar (" + direccion + ").");
+
 	}
-	
+
 	@Override
 	public void run() {
-		
-		while(state != Coche.STATE.TERMINADO) {
-			switch(state) {
-			
+
+		while (state != Coche.STATE.TERMINADO) {
+
+			switch (state) {
+
 			case ESPERANDO:
 				cocheEsperando();
-				break;	
+				break;
 			case CRUZANDO:
 				cocheCruzando();
 				break;
 			default:
 				break;
-				
+
 			}
 		}
 	}
-	
 }

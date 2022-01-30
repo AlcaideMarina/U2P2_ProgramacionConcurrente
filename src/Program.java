@@ -1,12 +1,12 @@
 import java.util.Random;
 
 public class Program {
-	
+
 	public static void main(String[] args) {
-		
+
 		MonitorPuente monitorPuente = new MonitorPuente();
 		String dir;
-		
+
 		while (true) {
 			// Utilizamos un random para decidir la dirección
 			Random rdm1 = new Random();
@@ -24,6 +24,4 @@ public class Program {
 			}
 		}
 	}
-
-	
 }
